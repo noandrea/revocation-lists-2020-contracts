@@ -1,0 +1,28 @@
+[package]
+name = "contract"
+version = "0.1.0"
+edition = "2021"
+authors = ["no.andrea@gmail.com"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[lib]
+crate-type = ["cdylib"]
+
+
+[dependencies]
+base64 = "0.13.1"
+flate2 = "1.0.24"
+hex = "0.4.3"
+near-sdk = "4.1.1"
+
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+# Opt into extra safety checks on arithmetic operations https://stackoverflow.com/a/64136471/249801
+overflow-checks = true
