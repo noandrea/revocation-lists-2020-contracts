@@ -1,22 +1,55 @@
+# Rust Smart Contracts for WebAssembly (WASM)
 
-It has been a difficult year for blockchain projects, there have been huge scandals and the trust in the technology and the people have never been so low. But hey, it can still get worse! 
+This repository contains implementations for WebAssembly (WASM) smart contracts written in Rust for different blockchain platforms. The primary goal of this project is to compare the ergonomics and other aspects of developing smart contracts in Rust on different blockchain platforms.
 
-Reflecting on recent developments, at least in the consumer market, in the current decade there have been IMHO, Tesla, it gave a big nudge to the electric car market, OpenAI that with DALL-E and ChatGPT is taking the AI to a greater public, Boston Dynamics that is bringing robotics to the next level and IoT that are slowly but surely entering consumer life via smart home devices. 
+## Supported Blockchains
 
-Is it the future we were imagining? Not yet, but we are getting there. 
+The following blockchain platforms are currently supported:
 
-And what about blockchain? That is a controversial topic to say the least: there has been a steady growth in interest about the technology, bot in a positive (google, amazon, finance institution testing it), and in a bad way (hetzner), and there has been some major fuck up to say the least. And the reason is not a secret, the principal use of the technology, as it started with Bitcoin, has been financial: and that's a topic that rarely is covered with positive vibes, add to that the possibility to access the unregulated crypto assets market by anyone combined with the promise of easy money, and what can go wrong?
+- NEAR Protocol
 
-But I still think there is value in the tech (beside being very interesting to work with as a tech person), and specifically there are a few topics that I find very interesting, beside the financial parts, like, for example governance and support for self-managed identities (SMI or SSI). 
+## RevocationList2020 Specification
 
-On the identities, and specifically around credentials, there is a specific problem that has a very important role in the credential system, that is, revocation lists. Revocation lists are buckets of credentials identifiers that must be public and tamper proof, that is, only the credential issuer shall be able to update a revocation lists, but every credential verifier (NOTE add link) must be able to query the revocation list. 
+All smart contracts in this repository implement the RevocationList2020 specification. The RevocationList2020 specification provides a way to revoke the credentials issued by a specific issuer. This can be useful in scenarios where an issuer needs to revoke a credential due to various reasons, such as a user's account being compromised or the credential being no longer valid.
 
-Since the revocation lists are public, there is naturally a privacy problem: a third party shall not have the ability to guess if my credential is listed in a revocation list. A few approaches have been developed to address this specific problem, some of them rely on ZK, some of them are proprietary. But there is one of them that provides a good level of privacy and that it is very easily developed using smart contract, and that is going to be the exercise of today: a smart contract that implements in a functional revocation list.
+The RevocationList2020 specification provides a standard format for revocation lists and defines how these lists can be used to revoke credentials issued by an issuer. All smart contracts in this repository adhere to this specification, which ensures that the revocation process is interoperable across different blockchain platforms.
 
-To make the exercise more interesting, is going to be not 1, but 3 implementations, all of them in Rust, targeting 3 different blockchain and smart contract implementations:
-- NEAR
-- Archway (Cosmowasm)
-- Solana
+By implementing the RevocationList2020 specification, these smart contracts provide an additional layer of security and flexibility, making them suitable for various use cases.
 
+## Getting Started
 
+To get started with this project, you'll need to have Rust and the toolchains for the respective blockchain platforms installed on your machine.
 
+1. Clone the repository:
+
+```sh
+git clone https://github.com/noandrea/revocation-lists-2020-contracts.git
+```
+
+2. Change into the project directory:
+```sh
+Copy code
+cd rust-smart-contracts
+```
+
+3. Change into the directory for the blockchain platform you want to work with:
+
+```sh
+cd ethereum
+```
+
+4. Build the smart contract:
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+4. Deploy the smart contract to the blockchain platform:
+
+For Ethereum, you can use tools such as `web3.js` or `ethers.js` to deploy the contract. For Solana, you can use `solana deploy`. For NEAR Protocol, you can use `near deploy`.
+
+## Contributing
+We welcome contributions from anyone. If you'd like to contribute to this project, please fork the repository and create a pull request.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
