@@ -29,24 +29,36 @@ git clone https://github.com/noandrea/revocation-lists-2020-contracts.git
 2. Change into the project directory:
 ```sh
 Copy code
-cd rust-smart-contracts
+cd revocation-lists-2020-contracts
 ```
 
 3. Change into the directory for the blockchain platform you want to work with:
 
 ```sh
-cd ethereum
+cd near 
 ```
 
 4. Build the smart contract:
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+make build
 ```
 
 4. Deploy the smart contract to the blockchain platform:
 
-For Ethereum, you can use tools such as `web3.js` or `ethers.js` to deploy the contract. For Solana, you can use `solana deploy`. For NEAR Protocol, you can use `near deploy`.
+For Solana, you can use `solana deploy`. For NEAR Protocol, you can use `near deploy`.
+
+## Contract structure
+
+The contract has the following method signatures:
+
+- `register_list(string)` - register a new list using the input string for the list id
+- `get_encoded_lsit(string)` - retrieve the encoded revocation list identified by `string` 
+- `is_revoked(string, int)` - return whenver a credential at index `int` has been revoked
+- `revoke(string, int)` - revoke a single credential
+- `reset(string, int)` - 
+- `update(string, []int, []int)` - atomically update a revocation list 
+- `replace_list(string, string)` - replace the list
 
 ## Contributing
 We welcome contributions from anyone. If you'd like to contribute to this project, please fork the repository and create a pull request.
