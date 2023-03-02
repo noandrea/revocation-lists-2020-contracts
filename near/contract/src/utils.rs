@@ -21,3 +21,5 @@ pub fn assert_single_promise_success() {
         _ => panic!("Expected PromiseStatus to be successful"),
     };
 }
+
+

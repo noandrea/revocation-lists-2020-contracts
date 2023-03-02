@@ -1,8 +1,6 @@
 mod models;
 mod utils;
 
-use std::convert::TryInto;
-
 use crate::{models::RL2020, utils::AccountId};
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
@@ -15,7 +13,7 @@ use near_sdk::{env, near_bindgen, PromiseIndex};
 #[derive(PanicOnDefault, BorshDeserialize, BorshSerialize)]
 pub struct Contract {
     owner: AccountId,
-    rls: LookupMap<String, RL2020>,
+    rls: LookupMap<String, (String, RL2020)>,
 }
 
 #[near_bindgen]
@@ -28,7 +26,8 @@ impl Contract {
         }
     }
 
-    pub fn add_list(&mut self, id: String) {
+    /// register a new revocation list
+    pub fn register_list(&mut self, id: String) {
         if id.trim().is_empty() {
             env::panic_str("ERR_INVALID_RL_LIST");
         }
@@ -36,7 +35,9 @@ impl Contract {
             env::panic_str("ERR_RL_EXISTS");
         }
         let rl = RL2020::new().unwrap_or_else(|e| env::panic_str(&e.message));
-        self.rls.insert(&id, &rl);
+
+        let owner = env::predecessor_account_id().to_string();
+        self.rls.insert(&id, &(owner, rl));
         env::log_str("Added a new revocation list");
     }
 
@@ -46,7 +47,7 @@ impl Contract {
             .get(&id)
             .unwrap_or_else(|| env::panic_str("ERR_RL_NOT_FOUND"));
 
-        rl.encoded_list
+        rl.to_string()
     }
 
     pub fn is_revoked(&self, id: String, idx: u64) -> bool {
@@ -54,16 +55,55 @@ impl Contract {
             .rls
             .get(&id)
             .unwrap_or_else(|| env::panic_str("ERR_RL_NOT_FOUND"));
-        rl.is_revoked(idx)
-            .unwrap_or_else(|e| env::panic_str(&e.message))
+        rl.get(idx).unwrap_or_else(|e| env::panic_str(&e.message))
     }
 
+    fn check_permission((ref owner, _): &(String, RL2020)) {
+        if env::predecessor_account_id() != self.owner {
+            env::panic_str("ERR_NOT_AUTHORIZED");
+        }
+    }
+
+    pub fn set_list(&mut self, id: String, hex_encoded_list: String) {
+        let mut rl = self.rls.get(&id).unwrap_or_else(|| {
+            env::panic_str("ERR_RL_NOT_FOUND");
+        });
+        Self::check_permission(&rl);
+        let encoded_list = hex::decode(hex_encoded_list).unwrap_or_else(|e| {
+            env::panic_str(&e.to_string());
+        });
+        rl.replace(encoded_list)
+            .unwrap_or_else(|e| env::panic_str(&e.message));
+        self.rls.insert(&id, &rl);
+    }
+
+    /// revoke a credential
     pub fn revoke(&mut self, id: String, idx: u64) {
         self.set(id, idx, true)
     }
 
+    // reset a credential to not revoked
     pub fn reset(&mut self, id: String, idx: u64) {
         self.set(id, idx, false)
+    }
+
+    /// Update a revocation list with a list of ids to revoke and reset
+    /// reset is a list of ids to reset to not revoked
+    /// revoke is a list of ids to revoke
+    /// reset take precedence over revoke
+    pub fn update(&mut self, id: String, to_revoke: Vec<u64>, to_reset: Vec<u64>) {
+        let mut rl = self
+            .rls
+            .get(&id)
+            .unwrap_or_else(|| env::panic_str("ERR_RL_NOT_FOUND"));
+       
+        Self::check_permission(&rl);
+
+        rl.set_many(to_revoke, to_reset)
+            .unwrap_or_else(|e| env::panic_str(&e.message));
+
+        self.rls.insert(&id, &rl);
+        env::log_str("revocation list updated");
     }
 
     fn set(&mut self, id: String, idx: u64, revoked: bool) {
@@ -76,11 +116,14 @@ impl Contract {
             env::panic_str("ERR_UNAUTHORIZED");
         }
 
-        rl.set(revoked, idx)
-            .unwrap_or_else(|e| env::panic_str(&e.message));
+        match revoked {
+            true => rl.set_many(vec![idx], vec![]),
+            false => rl.set_many(vec![], vec![idx]),
+        }
+        .unwrap_or_else(|e| env::panic_str(&e.message));
 
         self.rls.insert(&id, &rl);
-        env::log_str("credential updated");
+        env::log_str("revocation list element updated");
     }
 }
 
@@ -107,7 +150,9 @@ mod tests {
         let mut contract = Contract::new();
 
         contract.add_list("example/rl/1".to_string());
-        let result = contract.get_encoded_list("example/rl/1".to_string());
+        let result = contract
+            .get_encoded_list("example/rl/1".to_string())
+            .to_string();
 
         assert_eq!(
             &result,
