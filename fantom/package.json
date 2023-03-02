@@ -1,0 +1,43 @@
+{
+  "name": "rl2020",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "clean": "hardhat clean",
+    "void:deploy": "hardhat deploy",
+    "test": "hardhat test",
+    "gas": "REPORT_GAS=true hardhat test",
+    "coverage": "HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
+    "typechain": "TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
+    "fork": "hardhat node",
+    "deploy:mainnet": "hardhat --network mainnet deploy",
+    "deploy:rinkeby": "hardhat --network rinkeby deploy",
+    "deploy:ropsten": "hardhat --network ropsten deploy",
+    "deploy:hardhat": "hardhat --network hardhat deploy",
+    "deploy:fantom-testnet": "hardhat --network fantom-testnet deploy",
+    "sourcify:mainnet": "hardhat --network mainnet sourcify",
+    "sourcify:rinkeby": "hardhat --network rinkeby sourcify",
+    "etherscan:mainnet": "hardhat --network mainnet etherscan-verify",
+    "etherscan:rinkeby": "hardhat --network rinkeby etherscan-verify",
+    "prestart": "yarn run typechain",
+    "start": "hardhat node --network hardhat"
+  },
+  "keywords": [],
+  "author": "no.andrea@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.2",
+    "@nomiclabs/hardhat-etherscan": "^3.1.6",
+    "@nomiclabs/hardhat-waffle": "^2.0.5",
+    "chai": "^4.3.7",
+    "ethereum-waffle": "^4.0.10",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.12.7",
+    "solidity-coverage": "^0.8.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.1"
+  }
+}
