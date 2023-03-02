@@ -2,19 +2,17 @@
 
 ### Before you start
 
-Install rust, install npx+npm.
-
-
+Install rust, npx, and npm.
 
 ## How to deploy 
 
 > Create contract account
 
 ```sh
-./near create-account revocation-lists.metadid.testnet  --masterAccount metadid.testnet
+near create-account revocation-lists.metadid.testnet  --masterAccount metadid.testnet
 ```
 ```
-Saving key to '/home/andrea/.near-credentials/testnet/revocation-lists.metadid.testnet.json'
+Saving key to '$HOME/.near-credentials/testnet/revocation-lists.metadid.testnet.json'
 Account revocation-lists.metadid.testnet for network "testnet" was created.
 ```
 
@@ -29,21 +27,18 @@ make build
 RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
 ```
 ```
-Compiling contract v0.1.0 (/home/andrea/Documents/workspaces/horizon2023/rl_contract/near/contract)
+Compiling contract v0.1.0 (...)
    Finished release [optimized] target(s) in 2.12s
 ```
 
 > Deploy 
-```sh 
-cd ..
-```
-
 
 ```sh
-./near deploy --accountId revocation-lists.metadid.testnet --wasmFilecontract/target/wasm32-unknown-unknown/release/contract.wasm 
+./near deploy --accountId revocation-lists.metadid.testnet --wasmFile target/wasm32-unknown-unknown/release/contract.wasm 
 ```
+
 ```
-Starting deployment. Account id: revocation-lists.metadid.testnet, node: https://rpc.testnet.near.org, helper: https://helper.testnet.near.org, file: contract/target/wasm32-unknown-unknown/release/contract.wasm
+Starting deployment. Account id: revocation-lists.metadid.testnet, node: https://rpc.testnet.near.org, helper: https://helper.testnet.near.org, file: target/wasm32-unknown-unknown/release/contract.wasm
 Transaction Id 6QaSDXgDBqzw55CP9m5FxkHFzDAgeYvUoHBy3x4eH5qV
 To see the transaction in the transaction explorer, please open this url in your browser
 https://explorer.testnet.near.org/transactions/6QaSDXgDBqzw55CP9m5FxkHFzDAgeYvUoHBy3x4eH5qV
@@ -52,10 +47,8 @@ Done deploying to revocation-lists.metadid.testnet
 
 > Init the contract
 
-
-
 ```
-./near call revocation-lists.metadid.testnet new '{"owner": "metadid.testnet"}'  --accountId metadid.testnet
+near call revocation-lists.metadid.testnet new '{"owner": "metadid.testnet"}'  --accountId metadid.testnet
 ```
 
 ```
@@ -71,7 +64,7 @@ https://explorer.testnet.near.org/transactions/DWrvvzt2u8gb3k6NGpyPqTuc3QvuCVr94
 > Init revocation lists
 
 ```
-./near call revocation-lists.metadid.testnet add_list '{"id": "metadid.testnet/rl/1"}' --accountId metadid.testnet
+near call revocation-lists.metadid.testnet add_list '{"id": "metadid.testnet/rl/1"}' --accountId metadid.testnet
 ```
 
 ```
